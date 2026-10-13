@@ -85,7 +85,7 @@ def validate(op, s):
     if op == "python":
         if not isinstance(s["code"], str):
             raise ValueError("code must be a string")
-        compile(s["code"], "<astra-mcp>", "exec")
+        compile(s["code"], "<frugal-mcp>", "exec")
         if not isinstance(s.get("params", {}), dict):
             raise ValueError("params must be an object")
         if type(s.get("max_output", 2000)) is not int or not 0 <= s.get("max_output", 2000) <= 32000:
@@ -154,7 +154,7 @@ def run(engine, s):
         capture = BoundedOutput(limit)
         namespace = {"bpy": bpy, "params": s.get("params", {}), "output_dir": str(engine.output_dir)}
         with contextlib.redirect_stdout(capture), contextlib.redirect_stderr(capture):
-            exec(compile(s["code"], "<astra-mcp>", "exec"), namespace)
+            exec(compile(s["code"], "<frugal-mcp>", "exec"), namespace)
         value = namespace.get("result")
         # Reject non-JSON results explicitly, rather than leaking opaque bpy representations.
         encoded = json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(",", ":"))

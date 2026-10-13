@@ -7,11 +7,11 @@ from .engine import Engine
 from .transport import Server, state_dir
 
 bl_info = {
-    "name": "Blender Astra MCP",
+    "name": "Frugal Blender MCP",
     "author": "Mohak Malviya",
     "version": (0, 2, 0),
     "blender": (4, 2, 0),
-    "location": "View3D > Sidebar > Astra MCP",
+    "location": "View3D > Sidebar > Frugal MCP",
     "description": "Let AI agents build scenes through four compact MCP tools",
     "category": "Interface",
 }
@@ -33,7 +33,7 @@ def stop():
 def start(output_dir=None, descriptor=None, permissions=("write", "render"), timer=True):
     global _server, _timer
     if _server is not None:
-        raise RuntimeError("Astra MCP bridge already running")
+        raise RuntimeError("Frugal MCP bridge already running")
     _server = Server(Engine(output_dir or state_dir() / "exports", permissions), descriptor)
     if timer:
         _timer = _server.poll
@@ -73,11 +73,11 @@ class COMPACT_OT_stop(bpy.types.Operator):
 
 
 class COMPACT_PT_panel(bpy.types.Panel):
-    bl_label = "Astra MCP"
+    bl_label = "Frugal MCP"
     bl_idname = "COMPACT_PT_panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "Astra MCP"
+    bl_category = "Frugal MCP"
 
     def draw(self, context):
         layout = self.layout

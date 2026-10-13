@@ -8,7 +8,7 @@ Measured on 2026-10-13, Windows 11, tokenized with tiktoken. Raw output: [tool-c
 
 | Server | Tools | Definition tokens | Instruction tokens | Total (o200k) | vs. this repo |
 |---|---:|---:|---:|---:|---:|
-| **Blender Astra MCP** (this repo, 0.2.0) | **4** | 289 | 49 | **338** | 1x |
+| **Frugal Blender MCP** (this repo, 0.2.0) | **4** | 289 | 49 | **338** | 1x |
 | [Blender Lab official](https://projects.blender.org/lab/blender_mcp) blender-mcp 1.0.1 | 26 | 3,487 | 1,235 | 4,722 | 14.0x |
 | [ahujasid mcp-for-blender](https://github.com/ahujasid/mcp-for-blender) 2.0.0 | 31 | 7,111 | 353 | 7,464 | 22.1x |
 
@@ -58,7 +58,7 @@ where `servers.json` lists the commands to launch, for example:
 
 ```json
 [
-  {"label": "Blender Astra MCP", "command": "uvx", "args": ["blender-astra-mcp"]},
+  {"label": "Frugal Blender MCP", "command": "uvx", "args": ["frugal-blender-mcp"]},
   {"label": "ahujasid mcp-for-blender", "command": "uvx", "args": ["mcp-for-blender"]},
   {"label": "Blender Lab official", "command": "uv", "args": ["run", "--directory", "/path/to/blender_mcp", "blender-mcp"]}
 ]

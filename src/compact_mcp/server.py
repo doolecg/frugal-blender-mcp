@@ -37,7 +37,7 @@ class LeanFastMCP(FastMCP):
 
 
 mcp = LeanFastMCP(
-    "blender-astra",
+    "frugal-blender",
     instructions=(
         "Discover an operation before use. Batch related edits. Inspect narrowly; capture only when visual feedback "
         "is needed. Existing scenes are editable. Discover python for full bpy access (must be enabled in Blender). Partial batch failures persist; inspect before retrying."
@@ -92,7 +92,7 @@ def main():
     from . import __version__, install
 
     parser = argparse.ArgumentParser(
-        prog="blender-astra-mcp", description="Run the MCP server (default) or install the Blender add-on."
+        prog="frugal-blender-mcp", description="Run the MCP server (default) or install the Blender add-on."
     )
     parser.add_argument("--version", action="version", version=__version__)
     commands = parser.add_subparsers(dest="command")
@@ -111,8 +111,8 @@ def main():
         print(f"Installed to {install.install(args.blender_version)}")
     except FileNotFoundError as exc:
         raise SystemExit(str(exc)) from exc
-    print("Next, in Blender: Edit > Preferences > Add-ons, enable 'Blender Astra MCP',")
-    print("then open the 3D Viewport sidebar (N) > Astra MCP > Start bridge.")
+    print("Next, in Blender: Edit > Preferences > Add-ons, enable 'Frugal Blender MCP',")
+    print("then open the 3D Viewport sidebar (N) > Frugal MCP > Start bridge.")
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ def addon_source():
     for candidate in (here / "addon" / ADDON, here.parents[1] / "addon" / ADDON):
         if (candidate / "__init__.py").is_file():
             return candidate
-    raise FileNotFoundError("Bundled Blender add-on not found; reinstall blender-astra-mcp")
+    raise FileNotFoundError("Bundled Blender add-on not found; reinstall frugal-blender-mcp")
 
 
 def config_root():

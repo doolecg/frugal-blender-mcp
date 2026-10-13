@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.mohakmalviya/blender-astra-mcp",
-  "title": "Blender Astra MCP",
+  "name": "io.github.mohakmalviya/frugal-blender-mcp",
+  "title": "Frugal Blender MCP",
   "description": "Let AI agents build Blender scenes with four compact tools: discover, execute, inspect, capture.",
   "repository": {
-    "url": "https://github.com/mohakmalviya/blender-astra-mcp",
+    "url": "https://github.com/mohakmalviya/frugal-blender-mcp",
     "source": "github"
   },
   "version": "0.2.0",
   "packages": [
     {
       "registryType": "pypi",
-      "identifier": "blender-astra-mcp",
+      "identifier": "frugal-blender-mcp",
       "version": "0.2.0",
       "transport": {
         "type": "stdio"

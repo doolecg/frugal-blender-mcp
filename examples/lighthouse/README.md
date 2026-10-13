@@ -25,14 +25,14 @@ in the add-on panel before replaying.
 In Blender, start the bridge with **write**, **render** and **python** enabled on an empty scene, then:
 
 ```bash
-for f in examples/lighthouse/0*.json; do uvx --from blender-astra-mcp blender-astra execute --params - < "$f"; done
-uvx --from blender-astra-mcp blender-astra capture --params '{"filename":"lighthouse.png","size":1024}'
+for f in examples/lighthouse/0*.json; do uvx --from frugal-blender-mcp frugal-blender execute --params - < "$f"; done
+uvx --from frugal-blender-mcp frugal-blender capture --params '{"filename":"lighthouse.png","size":1024}'
 ```
 
 PowerShell:
 
 ```powershell
-Get-ChildItem examples/lighthouse/0*.json | ForEach-Object { Get-Content -Raw $_ | uvx --from blender-astra-mcp blender-astra execute --params - }
+Get-ChildItem examples/lighthouse/0*.json | ForEach-Object { Get-Content -Raw $_ | uvx --from frugal-blender-mcp frugal-blender execute --params - }
 ```
 
 Or headless from a clone, without touching your own Blender session. The host runs until you create
@@ -46,7 +46,7 @@ Then point the CLI at it:
 
 ```bash
 export BLENDER_COMPACT_CONNECTION=./demo-state/connection.json
-for f in examples/lighthouse/0*.json; do uv run blender-astra execute --params - < "$f"; done
+for f in examples/lighthouse/0*.json; do uv run frugal-blender execute --params - < "$f"; done
 ```
 
 The scene animates over frames 1 to 96 and loops. It renders with Cycles on an OptiX GPU when one is

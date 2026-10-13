@@ -12,7 +12,7 @@ Executed, not inferred:
   scene's aspect ratio (1920x1080 scene → 768x432 preview), EEVEE capture of a scene with no world
   plus the Cycles override (from #1), and lean tool definitions (no generated titles or `null`
   unions, at most 300 tokens).
-- Wheel smoke test through `uvx --isolated --from dist/blender_astra_mcp-0.2.0-py3-none-any.whl`:
+- Wheel smoke test through `uvx --isolated --from dist/frugal_blender_mcp-0.2.0-py3-none-any.whl`:
   `--version`, `--help` and `install-addon --zip`. The wheel bundles the add-on sources.
 - [Tool-context benchmark](tool-context.md): this server's real `tools/list` against Blender Lab's
   official server and ahujasid's server, tokenized with `o200k_base` and `cl100k_base`.

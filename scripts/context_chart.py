@@ -13,7 +13,11 @@ COLORS = {
     "bar": "#3d444d",
     "ours": "#f5922a",
 }
-LABELS = {"Blender Astra": "Blender Astra MCP", "Blender Lab": "Blender Lab official", "ahujasid": "ahujasid"}
+LABELS = {
+    "Frugal Blender": "Frugal Blender MCP",
+    "Blender Lab": "Blender Lab official",
+    "ahujasid": "ahujasid",
+}
 W, LEFT, BAR_MAX, ROW, PAD = 820, 250, 340, 56, 20
 
 

@@ -1,8 +1,8 @@
 [
   {
-    "label": "Blender Astra MCP",
+    "label": "Frugal Blender MCP",
     "server": {
-      "name": "blender-astra",
+      "name": "frugal-blender",
       "version": "1.30.0"
     },
     "tools": 4,

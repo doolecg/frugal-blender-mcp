@@ -124,7 +124,7 @@ class Engine:
         for col in scene.collection.children:
             if col.get(OWNER) is True:
                 return col
-        col = bpy.data.collections.new("Astra MCP")
+        col = bpy.data.collections.new("Frugal MCP")
         col[OWNER] = True
         scene.collection.children.link(col)
         return col
@@ -195,12 +195,12 @@ class Engine:
         # available; background mode deliberately makes no undo promise. Files are never undone.
         can_undo = not bpy.app.background and bpy.ops.ed.undo_push.poll()
         if can_undo:
-            bpy.ops.ed.undo_push(message="Before Astra MCP batch")
+            bpy.ops.ed.undo_push(message="Before Frugal MCP batch")
         try:
             return self.run_steps(steps)
         finally:
             if can_undo:
-                bpy.ops.ed.undo_push(message="Astra MCP batch")
+                bpy.ops.ed.undo_push(message="Frugal MCP batch")
 
     def run_steps(self, steps):
         completed = 0
