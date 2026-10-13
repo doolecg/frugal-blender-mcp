@@ -8,7 +8,7 @@ from mcp.server.fastmcp import FastMCP, Image
 from .client import Client
 
 mcp = FastMCP(
-    "blender-compact",
+    "blender-astra",
     instructions=(
         "Discover an operation before use. Batch related edits. Inspect narrowly; capture only when visual feedback "
         "is needed. Existing scenes are editable. Discover python for full bpy access (must be enabled in Blender). Partial batch failures persist; inspect before retrying."
@@ -45,10 +45,9 @@ def execute(steps: list[dict], dry_run: bool = False, timeout: int = 180) -> str
 
 @mcp.tool()
 def capture(size: int = 512, view: str = "camera", engine: str | None = None) -> Image:
-    """PNG preview (64..1024): camera render or viewport (requires interactive 3D View).
+    """PNG preview, longest edge 64..1024, scene aspect ratio: camera render or viewport (interactive only).
 
-    Defaults to EEVEE for fast, reliable previews. Pass engine="CYCLES" for
-    ray-traced quality (much slower, and dark on scenes without world lighting).
+    Renders with EEVEE (fast); pass engine="CYCLES" for ray-traced quality.
     """
     client = Client()
     result = client.call(
@@ -59,7 +58,32 @@ def capture(size: int = 512, view: str = "camera", engine: str | None = None) ->
 
 
 def main():
-    mcp.run(transport="stdio")
+    import argparse
+
+    from . import __version__, install
+
+    parser = argparse.ArgumentParser(
+        prog="blender-astra-mcp", description="Run the MCP server (default) or install the Blender add-on."
+    )
+    parser.add_argument("--version", action="version", version=__version__)
+    commands = parser.add_subparsers(dest="command")
+    setup = commands.add_parser("install-addon", help="Copy the Blender add-on into Blender's user scripts")
+    setup.add_argument("--blender-version", help="Target a specific Blender, e.g. 5.1 (default: newest)")
+    setup.add_argument("--zip", metavar="PATH", help="Write an add-on ZIP for Install from Disk instead")
+    args = parser.parse_args()
+    if args.command is None:
+        mcp.run(transport="stdio")
+        return
+    try:
+        if args.zip:
+            print(f"Wrote {install.write_zip(args.zip)}")
+            print("In Blender: Edit > Preferences > Add-ons > Install from Disk, then pick that file.")
+            return
+        print(f"Installed to {install.install(args.blender_version)}")
+    except FileNotFoundError as exc:
+        raise SystemExit(str(exc)) from exc
+    print("Next, in Blender: Edit > Preferences > Add-ons, enable 'Blender Astra MCP',")
+    print("then open the 3D Viewport sidebar (N) > Astra MCP > Start bridge.")
 
 
 if __name__ == "__main__":

@@ -295,6 +295,8 @@ def test_demo_render_and_save(blender):
     path = blender.image_path(image["file"])
     assert path.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
     assert image["bytes"] > 10000
+    # Factory scenes are 1920x1080; previews keep that framing with size as the longest edge.
+    assert (image["width"], image["height"]) == (768, 432)
     save = blender.call("execute", {"steps": [{"op": "save", "filename": "demo.blend"}]})
     assert save["ok"]
     out = Path(blender.info["output_dir"])

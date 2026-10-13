@@ -1,0 +1,343 @@
+{
+ "steps": [
+  {
+   "op": "primitive",
+   "kind": "cube",
+   "name": "Hull",
+   "location": [
+    2.2,
+    -8.0,
+    0.12
+   ],
+   "scale": [
+    1.1,
+    0.35,
+    0.18
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Hull",
+   "rotation": [
+    0,
+    0,
+    -0.45
+   ]
+  },
+  {
+   "op": "primitive",
+   "kind": "cylinder",
+   "name": "Mast",
+   "location": [
+    2.2,
+    -8.0,
+    1.2
+   ],
+   "scale": [
+    0.03,
+    0.03,
+    1.0
+   ]
+  },
+  {
+   "op": "primitive",
+   "kind": "cone",
+   "name": "Sail",
+   "location": [
+    2.3000000000000003,
+    -8.0,
+    1.15
+   ],
+   "scale": [
+    0.6,
+    0.6,
+    0.85
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Sail",
+   "scale": [
+    0.6,
+    0.02,
+    0.85
+   ],
+   "rotation": [
+    0,
+    0,
+    -0.45
+   ]
+  },
+  {
+   "op": "material",
+   "name": "Wood",
+   "color": [
+    0.18,
+    0.07,
+    0.03,
+    1
+   ],
+   "roughness": 0.6
+  },
+  {
+   "op": "material",
+   "name": "Canvas",
+   "color": [
+    0.85,
+    0.82,
+    0.74,
+    1
+   ],
+   "roughness": 0.7
+  },
+  {
+   "op": "assign_material",
+   "name": "Hull",
+   "material": "Wood"
+  },
+  {
+   "op": "assign_material",
+   "name": "Mast",
+   "material": "Wood"
+  },
+  {
+   "op": "assign_material",
+   "name": "Sail",
+   "material": "Canvas"
+  },
+  {
+   "op": "python",
+   "code": "import bpy\nhull = bpy.data.objects[\"Hull\"]\nfor name in (\"Mast\", \"Sail\"):\n    child = bpy.data.objects[name]\n    child.parent = hull\n    child.matrix_parent_inverse = hull.matrix_world.inverted()\n"
+  },
+  {
+   "op": "frame",
+   "start": 1,
+   "end": 96
+  },
+  {
+   "op": "keyframes",
+   "name": "Hull",
+   "data_path": "location",
+   "index": 2,
+   "keys": [
+    [
+     1,
+     0.12
+    ],
+    [
+     7,
+     0.1695
+    ],
+    [
+     13,
+     0.19
+    ],
+    [
+     19,
+     0.1695
+    ],
+    [
+     25,
+     0.12
+    ],
+    [
+     31,
+     0.0705
+    ],
+    [
+     37,
+     0.05
+    ],
+    [
+     43,
+     0.0705
+    ],
+    [
+     49,
+     0.12
+    ],
+    [
+     55,
+     0.1695
+    ],
+    [
+     61,
+     0.19
+    ],
+    [
+     67,
+     0.1695
+    ],
+    [
+     73,
+     0.12
+    ],
+    [
+     79,
+     0.0705
+    ],
+    [
+     85,
+     0.05
+    ],
+    [
+     91,
+     0.0705
+    ],
+    [
+     97,
+     0.12
+    ],
+    [
+     103,
+     0.1695
+    ],
+    [
+     109,
+     0.19
+    ],
+    [
+     115,
+     0.1695
+    ]
+   ]
+  },
+  {
+   "op": "keyframes",
+   "name": "Hull",
+   "data_path": "rotation_euler",
+   "index": 0,
+   "keys": [
+    [
+     1,
+     0.0559
+    ],
+    [
+     7,
+     0.0549
+    ],
+    [
+     13,
+     0.0217
+    ],
+    [
+     19,
+     -0.0242
+    ],
+    [
+     25,
+     -0.0559
+    ],
+    [
+     31,
+     -0.0549
+    ],
+    [
+     37,
+     -0.0217
+    ],
+    [
+     43,
+     0.0242
+    ],
+    [
+     49,
+     0.0559
+    ],
+    [
+     55,
+     0.0549
+    ],
+    [
+     61,
+     0.0217
+    ],
+    [
+     67,
+     -0.0242
+    ],
+    [
+     73,
+     -0.0559
+    ],
+    [
+     79,
+     -0.0549
+    ],
+    [
+     85,
+     -0.0217
+    ],
+    [
+     91,
+     0.0242
+    ],
+    [
+     97,
+     0.0559
+    ],
+    [
+     103,
+     0.0549
+    ],
+    [
+     109,
+     0.0217
+    ],
+    [
+     115,
+     -0.0242
+    ]
+   ]
+  },
+  {
+   "op": "keyframes",
+   "name": "Ocean",
+   "data_path": "modifiers[\"Ocean\"].time",
+   "keys": [
+    [
+     1,
+     0
+    ],
+    [
+     113,
+     3.5
+    ]
+   ]
+  },
+  {
+   "op": "python",
+   "code": "import bpy, math\ntop = bpy.data.objects[\"Lantern\"].location\npivot = bpy.data.objects.new(\"BeamPivot\", None)\nbpy.data.objects[\"Lantern\"].users_collection[0].objects.link(pivot)\npivot.location = top\nmat = bpy.data.materials.new(\"BeamMat\")\nmat.use_nodes = True\nnt = mat.node_tree\nnt.nodes.clear()\nadd = nt.nodes.new\ncoord, sep, power, glow = add(\"ShaderNodeTexCoord\"), add(\"ShaderNodeSeparateXYZ\"), add(\"ShaderNodeMath\"), add(\"ShaderNodeEmission\")\nclear, total, out = add(\"ShaderNodeBsdfTransparent\"), add(\"ShaderNodeAddShader\"), add(\"ShaderNodeOutputMaterial\")\npower.operation = \"POWER\"\npower.inputs[1].default_value = 3.0\nglow.inputs[\"Color\"].default_value = (1.0, 0.78, 0.45, 1)\nfor a, b in ((coord.outputs[\"Generated\"], sep.inputs[0]), (sep.outputs[\"Z\"], power.inputs[0]),\n             (power.outputs[0], glow.inputs[\"Strength\"]), (clear.outputs[0], total.inputs[0]),\n             (glow.outputs[0], total.inputs[1]), (total.outputs[0], out.inputs[\"Surface\"])):\n    nt.links.new(a, b)\nlength, radius = params[\"length\"], params[\"radius\"]\nfor i, side in enumerate((1, -1)):\n    bpy.ops.mesh.primitive_cone_add(vertices=48, radius1=radius, radius2=0.05, depth=length)\n    beam = bpy.context.object\n    beam.name = f\"Beam{i}\"\n    beam.rotation_euler = (0, -side * math.pi / 2, 0)\n    beam.location = (side * length / 2, 0, 0)\n    beam.parent = pivot\n    beam.data.materials.append(mat)\n    beam.visible_shadow = beam.visible_diffuse = beam.visible_glossy = False\n",
+   "params": {
+    "length": 16,
+    "radius": 1.1
+   }
+  },
+  {
+   "op": "keyframes",
+   "name": "BeamPivot",
+   "data_path": "rotation_euler",
+   "index": 2,
+   "keys": [
+    [
+     1,
+     0
+    ],
+    [
+     113,
+     7.33038
+    ]
+   ]
+  },
+  {
+   "op": "python",
+   "code": "import bpy\nfor name in params[\"names\"]:\n    action = bpy.data.objects[name].animation_data.action\n    curves = action.fcurves if hasattr(action, \"fcurves\") else [c for layer in action.layers for strip in layer.strips for bag in strip.channelbags for c in bag.fcurves]\n    for curve in curves:\n        for key in curve.keyframe_points:\n            key.interpolation = \"LINEAR\"\n",
+   "params": {
+    "names": [
+     "BeamPivot",
+     "Ocean"
+    ]
+   }
+  }
+ ]
+}

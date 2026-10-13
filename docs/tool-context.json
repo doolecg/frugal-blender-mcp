@@ -1,0 +1,129 @@
+[
+  {
+    "label": "Blender Astra MCP (this repo)",
+    "server": {
+      "name": "blender-compact",
+      "version": "1.30.0"
+    },
+    "tools": 4,
+    "tool_names": [
+      "inspect",
+      "discover",
+      "execute",
+      "capture"
+    ],
+    "definition_tokens": {
+      "o200k_base": 352,
+      "cl100k_base": 343
+    },
+    "instruction_tokens": {
+      "o200k_base": 49,
+      "cl100k_base": 50
+    },
+    "total_tokens": {
+      "o200k_base": 401,
+      "cl100k_base": 393
+    }
+  },
+  {
+    "label": "Blender Lab official blender-mcp 1.0.1",
+    "server": {
+      "name": "blender-mcp",
+      "version": "1.27.0"
+    },
+    "tools": 26,
+    "tool_names": [
+      "execute_blender_code",
+      "execute_blender_code_for_cli",
+      "get_blendfile_summary_datablocks",
+      "get_blendfile_summary_datablocks_for_cli",
+      "get_blendfile_summary_missing_files",
+      "get_blendfile_summary_missing_files_for_cli",
+      "get_blendfile_summary_of_linked_libraries",
+      "get_blendfile_summary_of_linked_libraries_for_cli",
+      "get_blendfile_summary_path_info",
+      "get_blendfile_summary_path_info_for_cli",
+      "get_blendfile_summary_usage_guess",
+      "get_blendfile_summary_usage_guess_for_cli",
+      "get_object_detail_summary",
+      "get_objects_summary",
+      "get_python_api_docs",
+      "get_screenshot_of_area_as_image",
+      "get_screenshot_of_window_as_image",
+      "get_screenshot_of_window_as_json",
+      "jump_to_tab_by_name",
+      "jump_to_tab_by_space_type",
+      "jump_to_view3d_object_by_name",
+      "jump_to_view3d_object_data_by_name",
+      "render_thumbnail_to_path",
+      "render_viewport_to_path",
+      "search_api_docs",
+      "search_manual_docs"
+    ],
+    "definition_tokens": {
+      "o200k_base": 3487,
+      "cl100k_base": 3410
+    },
+    "instruction_tokens": {
+      "o200k_base": 1235,
+      "cl100k_base": 1241
+    },
+    "total_tokens": {
+      "o200k_base": 4722,
+      "cl100k_base": 4651
+    }
+  },
+  {
+    "label": "ahujasid mcp-for-blender 2.0.0",
+    "server": {
+      "name": "BlenderMCP",
+      "version": "1.30.0"
+    },
+    "tools": 31,
+    "tool_names": [
+      "get_addon_status",
+      "disable_telemetry",
+      "get_scene_info",
+      "get_object_info",
+      "get_viewport_screenshot",
+      "execute_blender_code",
+      "describe_node_type",
+      "bpy_api_lookup",
+      "get_polyhaven_categories",
+      "search_polyhaven_assets",
+      "download_polyhaven_asset",
+      "set_texture",
+      "get_polyhaven_status",
+      "get_hyper3d_status",
+      "get_sketchfab_status",
+      "search_sketchfab_models",
+      "get_sketchfab_model_preview",
+      "download_sketchfab_model",
+      "get_polypizza_status",
+      "search_polypizza_models",
+      "download_polypizza_model",
+      "generate_hyper3d_model_via_text",
+      "generate_hyper3d_model_via_images",
+      "poll_rodin_job_status",
+      "import_generated_asset",
+      "get_hunyuan3d_status",
+      "generate_hunyuan3d_model",
+      "poll_hunyuan_job_status",
+      "import_generated_asset_hunyuan",
+      "export_scene",
+      "record_trajectory_feedback"
+    ],
+    "definition_tokens": {
+      "o200k_base": 7111,
+      "cl100k_base": 7038
+    },
+    "instruction_tokens": {
+      "o200k_base": 353,
+      "cl100k_base": 355
+    },
+    "total_tokens": {
+      "o200k_base": 7464,
+      "cl100k_base": 7393
+    }
+  }
+]

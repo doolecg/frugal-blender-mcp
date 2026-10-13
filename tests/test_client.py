@@ -35,6 +35,30 @@ def test_capture_path_traversal_refused(tmp_path):
     assert client.image_path("preview.png") == Path(tmp_path / "exports/preview.png")
 
 
+def test_cli_accepts_bom_from_powershell_pipe(monkeypatch, capsys):
+    import io
+    import sys
+
+    from compact_mcp import cli
+
+    calls = []
+
+    class FakeClient:
+        def __init__(self, connection=None):
+            pass
+
+        def call(self, method, params):
+            calls.append((method, params))
+            return {"ok": True}
+
+    monkeypatch.setattr(cli, "Client", FakeClient)
+    monkeypatch.setattr(sys, "argv", ["blender-compact", "execute", "--params", "-"])
+    monkeypatch.setattr(sys, "stdin", io.StringIO('﻿{"steps": []}'))
+    cli.main()
+    assert calls == [("execute", {"steps": []})]
+    assert capsys.readouterr().out.strip() == '{"ok":true}'
+
+
 def test_dead_server_does_not_silently_retry(tmp_path):
     client = Client(descriptor(tmp_path))
     with pytest.raises(RuntimeError, match="outcome may be unknown"):

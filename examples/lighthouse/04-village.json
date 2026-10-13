@@ -1,0 +1,461 @@
+{
+ "steps": [
+  {
+   "op": "primitive",
+   "kind": "cube",
+   "name": "House",
+   "location": [
+    -1.2,
+    0.6,
+    2.451
+   ],
+   "scale": [
+    0.9,
+    0.7,
+    0.6
+   ]
+  },
+  {
+   "op": "primitive",
+   "kind": "cube",
+   "name": "HouseRoof",
+   "location": [
+    -1.2,
+    0.6,
+    3.051
+   ],
+   "scale": [
+    0.7,
+    0.78,
+    0.7
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "HouseRoof",
+   "rotation": [
+    0,
+    0.7854,
+    0
+   ]
+  },
+  {
+   "op": "material",
+   "name": "Plaster",
+   "color": [
+    0.8,
+    0.74,
+    0.62,
+    1
+   ],
+   "roughness": 0.8
+  },
+  {
+   "op": "material",
+   "name": "Tiles",
+   "color": [
+    0.22,
+    0.05,
+    0.03,
+    1
+   ],
+   "roughness": 0.6
+  },
+  {
+   "op": "assign_material",
+   "name": "House",
+   "material": "Plaster"
+  },
+  {
+   "op": "assign_material",
+   "name": "HouseRoof",
+   "material": "Tiles"
+  },
+  {
+   "op": "primitive",
+   "kind": "cone",
+   "name": "Pine",
+   "location": [
+    0,
+    0,
+    0
+   ],
+   "scale": [
+    0.45,
+    0.45,
+    0.9
+   ]
+  },
+  {
+   "op": "array",
+   "name": "Pine",
+   "count": 8,
+   "offset": [
+    0,
+    1,
+    0
+   ],
+   "prefix": "Pine"
+  },
+  {
+   "op": "transform",
+   "name": "Pine",
+   "location": [
+    -2.8,
+    1.8,
+    2.166
+   ],
+   "scale": [
+    0.45,
+    0.45,
+    0.9
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Pine_001",
+   "location": [
+    -3.4,
+    0.2,
+    1.916
+   ],
+   "scale": [
+    0.383,
+    0.383,
+    0.765
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Pine_002",
+   "location": [
+    -2.2,
+    2.9,
+    2.154
+   ],
+   "scale": [
+    0.517,
+    0.517,
+    1.035
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Pine_003",
+   "location": [
+    0.2,
+    3.2,
+    2.335
+   ],
+   "scale": [
+    0.427,
+    0.427,
+    0.855
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Pine_004",
+   "location": [
+    -0.8,
+    2.4,
+    2.804
+   ],
+   "scale": [
+    0.562,
+    0.562,
+    1.125
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Pine_005",
+   "location": [
+    2.9,
+    2.2,
+    2.306
+   ],
+   "scale": [
+    0.405,
+    0.405,
+    0.81
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Pine_006",
+   "location": [
+    -3.0,
+    -1.2,
+    1.841
+   ],
+   "scale": [
+    0.338,
+    0.338,
+    0.675
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Pine_007",
+   "location": [
+    3.4,
+    0.6,
+    2.319
+   ],
+   "scale": [
+    0.36,
+    0.36,
+    0.72
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Pine_008",
+   "location": [
+    2.3,
+    3.0,
+    2.355
+   ],
+   "scale": [
+    0.495,
+    0.495,
+    0.99
+   ]
+  },
+  {
+   "op": "material",
+   "name": "PineMat",
+   "color": [
+    0.02,
+    0.085,
+    0.03,
+    1
+   ],
+   "roughness": 0.8
+  },
+  {
+   "op": "assign_material",
+   "name": "Pine",
+   "material": "PineMat"
+  },
+  {
+   "op": "primitive",
+   "kind": "sphere",
+   "name": "Rock",
+   "location": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "op": "modifier",
+   "name": "Rock",
+   "modifier": "LowPoly",
+   "type": "DECIMATE",
+   "properties": {
+    "ratio": 0.08
+   }
+  },
+  {
+   "op": "array",
+   "name": "Rock",
+   "count": 4,
+   "offset": [
+    0,
+    1,
+    0
+   ],
+   "prefix": "Rock"
+  },
+  {
+   "op": "material",
+   "name": "Stone",
+   "color": [
+    0.11,
+    0.1,
+    0.09,
+    1
+   ],
+   "roughness": 0.85
+  },
+  {
+   "op": "assign_material",
+   "name": "Rock",
+   "material": "Stone"
+  },
+  {
+   "op": "transform",
+   "name": "Rock",
+   "location": [
+    3.5,
+    -4.4,
+    -0.15
+   ],
+   "scale": [
+    0.6,
+    0.5,
+    0.4
+   ],
+   "rotation": [
+    0.3,
+    0.2,
+    0.3
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Rock_001",
+   "location": [
+    4.6,
+    -3.3,
+    -0.15
+   ],
+   "scale": [
+    0.4,
+    0.35,
+    0.3
+   ],
+   "rotation": [
+    0.3,
+    0.2,
+    1.1
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Rock_002",
+   "location": [
+    -5.2,
+    -2.9,
+    -0.15
+   ],
+   "scale": [
+    0.7,
+    0.6,
+    0.45
+   ],
+   "rotation": [
+    0.3,
+    0.2,
+    2.0
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Rock_003",
+   "location": [
+    6.1,
+    1.2,
+    -0.15
+   ],
+   "scale": [
+    0.5,
+    0.4,
+    0.35
+   ],
+   "rotation": [
+    0.3,
+    0.2,
+    0.7
+   ]
+  },
+  {
+   "op": "transform",
+   "name": "Rock_004",
+   "location": [
+    7.5,
+    -5.5,
+    -0.15
+   ],
+   "scale": [
+    0.9,
+    0.7,
+    0.6
+   ],
+   "rotation": [
+    0.3,
+    0.2,
+    1.6
+   ]
+  },
+  {
+   "op": "assign_material",
+   "name": "Rock_001",
+   "material": "Stone"
+  },
+  {
+   "op": "assign_material",
+   "name": "Rock_002",
+   "material": "Stone"
+  },
+  {
+   "op": "assign_material",
+   "name": "Rock_003",
+   "material": "Stone"
+  },
+  {
+   "op": "assign_material",
+   "name": "Rock_004",
+   "material": "Stone"
+  },
+  {
+   "op": "assign_material",
+   "name": "Pine_001",
+   "material": "PineMat"
+  },
+  {
+   "op": "assign_material",
+   "name": "Pine_002",
+   "material": "PineMat"
+  },
+  {
+   "op": "assign_material",
+   "name": "Pine_003",
+   "material": "PineMat"
+  },
+  {
+   "op": "assign_material",
+   "name": "Pine_004",
+   "material": "PineMat"
+  },
+  {
+   "op": "assign_material",
+   "name": "Pine_005",
+   "material": "PineMat"
+  },
+  {
+   "op": "assign_material",
+   "name": "Pine_006",
+   "material": "PineMat"
+  },
+  {
+   "op": "assign_material",
+   "name": "Pine_007",
+   "material": "PineMat"
+  },
+  {
+   "op": "assign_material",
+   "name": "Pine_008",
+   "material": "PineMat"
+  },
+  {
+   "op": "python",
+   "code": "import bpy, math\nfor name in params[\"names\"]:\n    bpy.data.objects[name].data.set_sharp_from_angle(angle=math.radians(40))\n",
+   "params": {
+    "names": [
+     "Pine",
+     "Pine_001",
+     "Pine_002",
+     "Pine_003",
+     "Pine_004",
+     "Pine_005",
+     "Pine_006",
+     "Pine_007",
+     "Pine_008"
+    ]
+   }
+  }
+ ]
+}

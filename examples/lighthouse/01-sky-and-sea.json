@@ -1,0 +1,162 @@
+{
+ "steps": [
+  {
+   "op": "python",
+   "code": "import bpy, math\nprefs = bpy.context.preferences.addons[\"cycles\"].preferences\ntry:\n    prefs.compute_device_type = \"OPTIX\"\n    prefs.refresh_devices()\n    for d in prefs.devices:\n        d.use = d.type == \"OPTIX\"\n    gpu = [d.name for d in prefs.devices if d.use]\nexcept TypeError:\n    gpu = []\nscene = bpy.context.scene\nscene.render.engine = \"CYCLES\"\nscene.cycles.device = \"GPU\" if gpu else \"CPU\"\ntree = scene.world.node_tree\nsky = tree.nodes.new(\"ShaderNodeTexSky\")\ntry:\n    sky.sky_type = \"MULTIPLE_SCATTERING\"\nexcept TypeError:\n    sky.sky_type = \"NISHITA\"\nsky.sun_elevation = math.radians(params[\"elevation\"])\nsky.sun_rotation = math.radians(params[\"rotation\"])\nsky.sun_intensity = params[\"sun_intensity\"]\nsetattr(sky, \"aerosol_density\" if hasattr(sky, \"aerosol_density\") else \"dust_density\", params[\"aerosol\"])\nsky.air_density = params[\"air\"]\nbackground = tree.nodes[\"Background\"]\ntree.links.new(sky.outputs[\"Color\"], background.inputs[\"Color\"])\nbackground.inputs[\"Strength\"].default_value = params[\"strength\"]\nresult = {\"device\": scene.cycles.device, \"gpu\": gpu}\n",
+   "params": {
+    "elevation": 1.8,
+    "rotation": -40.0,
+    "sun_intensity": 1.0,
+    "aerosol": 3.0,
+    "air": 1.4,
+    "strength": 0.45
+   }
+  },
+  {
+   "op": "properties",
+   "target": "scene",
+   "values": {
+    "cycles.samples": 96,
+    "cycles.use_denoising": true,
+    "view_settings.exposure": -0.2
+   }
+  },
+  {
+   "op": "properties",
+   "target": "render",
+   "values": {
+    "resolution_x": 1600,
+    "resolution_y": 900
+   }
+  },
+  {
+   "op": "primitive",
+   "kind": "plane",
+   "name": "Ocean"
+  },
+  {
+   "op": "modifier",
+   "name": "Ocean",
+   "modifier": "Ocean",
+   "type": "OCEAN",
+   "properties": {
+    "geometry_mode": "GENERATE",
+    "spatial_size": 60,
+    "resolution": 14,
+    "repeat_x": 4,
+    "repeat_y": 4,
+    "wave_scale": 0.35,
+    "choppiness": 0.9,
+    "wind_velocity": 9,
+    "random_seed": 7
+   }
+  },
+  {
+   "op": "primitive",
+   "kind": "plane",
+   "name": "FarSea",
+   "location": [
+    0,
+    0,
+    -0.25
+   ],
+   "scale": [
+    4000,
+    4000,
+    1
+   ]
+  },
+  {
+   "op": "material",
+   "name": "Water",
+   "color": [
+    0.004,
+    0.022,
+    0.03,
+    1
+   ],
+   "roughness": 0.03
+  },
+  {
+   "op": "assign_material",
+   "name": "Ocean",
+   "material": "Water"
+  },
+  {
+   "op": "assign_material",
+   "name": "FarSea",
+   "material": "Water"
+  },
+  {
+   "op": "light",
+   "name": "Sun",
+   "kind": "SUN",
+   "energy": 4,
+   "location": [
+    64.247,
+    76.567,
+    3.141
+   ],
+   "target": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "op": "properties",
+   "name": "Sun",
+   "target": "data",
+   "values": {
+    "color": [
+     1.0,
+     0.56,
+     0.3
+    ],
+    "angle": 0.03
+   }
+  },
+  {
+   "op": "camera",
+   "name": "Camera",
+   "location": [
+    -6.74,
+    -19.4,
+    2.5
+   ],
+   "target": [
+    2.79,
+    -0.69,
+    3.6
+   ],
+   "lens": 32
+  },
+  {
+   "op": "primitive",
+   "kind": "plane",
+   "name": "Clouds",
+   "location": [
+    0,
+    400,
+    160
+   ],
+   "scale": [
+    1500,
+    1500,
+    1
+   ]
+  },
+  {
+   "op": "properties",
+   "name": "Clouds",
+   "values": {
+    "visible_shadow": false,
+    "visible_diffuse": false
+   }
+  },
+  {
+   "op": "python",
+   "code": "import bpy\nmat = bpy.data.materials.new(\"CloudMat\")\nmat.use_nodes = True\nnt = mat.node_tree\nnt.nodes.clear()\nadd = nt.nodes.new\ncoord, mapping, noise = add(\"ShaderNodeTexCoord\"), add(\"ShaderNodeMapping\"), add(\"ShaderNodeTexNoise\")\nramp, mix, out = add(\"ShaderNodeValToRGB\"), add(\"ShaderNodeMixShader\"), add(\"ShaderNodeOutputMaterial\")\nclear, glow = add(\"ShaderNodeBsdfTransparent\"), add(\"ShaderNodeEmission\")\nmapping.inputs[\"Scale\"].default_value = (6, 12, 6)\nnoise.inputs[\"Scale\"].default_value = 2.5\nnoise.inputs[\"Detail\"].default_value = 10\nnoise.inputs[\"Roughness\"].default_value = 0.62\nramp.color_ramp.elements[0].position = 0.5\nramp.color_ramp.elements[1].position = 0.72\nglow.inputs[\"Color\"].default_value = (1.0, 0.48, 0.32, 1)\nglow.inputs[\"Strength\"].default_value = 1.2\nfor a, b in ((coord.outputs[\"Generated\"], mapping.inputs[\"Vector\"]), (mapping.outputs[0], noise.inputs[\"Vector\"]),\n             (noise.outputs[\"Fac\"], ramp.inputs[\"Fac\"]), (ramp.outputs[\"Color\"], mix.inputs[\"Fac\"]),\n             (clear.outputs[0], mix.inputs[1]), (glow.outputs[0], mix.inputs[2]), (mix.outputs[0], out.inputs[\"Surface\"])):\n    nt.links.new(a, b)\nbpy.data.objects[\"Clouds\"].data.materials.append(mat)\n"
+  }
+ ]
+}

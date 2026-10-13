@@ -14,7 +14,8 @@ def main():
     parser.add_argument("--connection", help="Explicit descriptor path for multiple instances")
     args = parser.parse_args()
     try:
-        params = json.loads(sys.stdin.read() if args.params == "-" else args.params)
+        # PowerShell pipes may prepend a UTF-8 BOM; JSON itself never starts with one.
+        params = json.loads((sys.stdin.read() if args.params == "-" else args.params).lstrip("﻿"))
         result = Client(args.connection).call(args.method, params)
         print(json.dumps(result, separators=(",", ":")))
         if isinstance(result, dict) and result.get("ok") is False:

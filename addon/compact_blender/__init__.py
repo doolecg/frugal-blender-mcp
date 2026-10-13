@@ -7,12 +7,12 @@ from .engine import Engine
 from .transport import Server, state_dir
 
 bl_info = {
-    "name": "Compact Blender MCP",
+    "name": "Blender Astra MCP",
     "author": "Mohak Malviya",
     "version": (0, 2, 0),
     "blender": (4, 2, 0),
-    "location": "View3D > Sidebar > Compact MCP",
-    "description": "Batched Blender operations through four compact MCP tools",
+    "location": "View3D > Sidebar > Astra MCP",
+    "description": "Let AI agents build scenes through four compact MCP tools",
     "category": "Interface",
 }
 
@@ -33,7 +33,7 @@ def stop():
 def start(output_dir=None, descriptor=None, permissions=("write", "render"), timer=True):
     global _server, _timer
     if _server is not None:
-        raise RuntimeError("Compact MCP already running")
+        raise RuntimeError("Astra MCP bridge already running")
     _server = Server(Engine(output_dir or state_dir() / "exports", permissions), descriptor)
     if timer:
         _timer = _server.poll
@@ -54,7 +54,9 @@ class COMPACT_OT_start(bpy.types.Operator):
     def execute(self, context):
         settings = context.scene
         permissions = [
-            key for key in ("write", "render", "delete", "save", "python") if getattr(settings, f"compact_allow_{key}")
+            key
+            for key in ("write", "render", "delete", "save", "python")
+            if getattr(settings, f"compact_allow_{key}")
         ]
         start(permissions=permissions)
         self.report({"INFO"}, "Bridge started on loopback. Permissions fixed until stopped.")
@@ -71,11 +73,11 @@ class COMPACT_OT_stop(bpy.types.Operator):
 
 
 class COMPACT_PT_panel(bpy.types.Panel):
-    bl_label = "Compact MCP"
+    bl_label = "Astra MCP"
     bl_idname = "COMPACT_PT_panel"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "Compact MCP"
+    bl_category = "Astra MCP"
 
     def draw(self, context):
         layout = self.layout

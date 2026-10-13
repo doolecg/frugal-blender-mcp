@@ -40,7 +40,7 @@ wheels = [
 ]
 
 [[package]]
-name = "blender-compact-mcp"
+name = "blender-astra-mcp"
 version = "0.2.0"
 source = { editable = "." }
 dependencies = [

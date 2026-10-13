@@ -1,0 +1,96 @@
+{
+ "steps": [
+  {
+   "op": "primitive",
+   "kind": "sphere",
+   "name": "Sand",
+   "location": [
+    0,
+    0,
+    -1.2
+   ],
+   "scale": [
+    7,
+    6,
+    2.6
+   ]
+  },
+  {
+   "op": "primitive",
+   "kind": "sphere",
+   "name": "Grass",
+   "location": [
+    0.5,
+    0.3,
+    -0.2
+   ],
+   "scale": [
+    5,
+    4.5,
+    2.4
+   ]
+  },
+  {
+   "op": "modifier",
+   "name": "Sand",
+   "modifier": "Smooth",
+   "type": "SUBSURF",
+   "properties": {
+    "levels": 2,
+    "render_levels": 2
+   }
+  },
+  {
+   "op": "modifier",
+   "name": "Grass",
+   "modifier": "Smooth",
+   "type": "SUBSURF",
+   "properties": {
+    "levels": 2,
+    "render_levels": 2
+   }
+  },
+  {
+   "op": "python",
+   "code": "import bpy, math\nnoise = bpy.data.textures.new(\"IslandNoise\", \"CLOUDS\")\nnoise.noise_scale = 1.4\nfor name, strength in params[\"displace\"].items():\n    obj = bpy.data.objects[name]\n    obj.data.shade_smooth()\n    mod = obj.modifiers.new(\"Noise\", \"DISPLACE\")\n    mod.texture = noise\n    mod.strength = strength\n",
+   "params": {
+    "displace": {
+     "Sand": 0.5,
+     "Grass": 0.35
+    }
+   }
+  },
+  {
+   "op": "material",
+   "name": "SandMat",
+   "color": [
+    0.62,
+    0.45,
+    0.27,
+    1
+   ],
+   "roughness": 0.9
+  },
+  {
+   "op": "material",
+   "name": "GrassMat",
+   "color": [
+    0.1,
+    0.24,
+    0.05,
+    1
+   ],
+   "roughness": 0.8
+  },
+  {
+   "op": "assign_material",
+   "name": "Sand",
+   "material": "SandMat"
+  },
+  {
+   "op": "assign_material",
+   "name": "Grass",
+   "material": "GrassMat"
+  }
+ ]
+}

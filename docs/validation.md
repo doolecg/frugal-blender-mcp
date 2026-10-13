@@ -1,12 +1,22 @@
-# Validation — 2026-09-10
+# Validation — 2026-10-13
 
-Local environment: Windows 11, Blender **5.1.1**, Python **3.12.10**, MCP Python SDK **1.30.0**.
+Local environment: Windows 11, Blender **5.1.1**, Python **3.12.10**, MCP Python SDK **1.30.0**,
+NVIDIA RTX 5060 Laptop GPU (OptiX).
 
 Executed, not inferred:
 
-- `uv run ruff check --config pyproject.toml .` — passed.
-- Full pytest suite with `BLENDER_EXE` and `BLENDER_TEST_UI=1` — **24 passed**, no skips;
-  subsequently added isolated ZIP-install smoke test — **1 passed** (25 tests verified in total).
+- `uv run ruff check` and `uv run ruff format --check` — passed.
+- Full pytest suite with `BLENDER_EXE` and `BLENDER_TEST_UI=1` — **31 passed**, no skips. New since
+  2026-09-10: `install-addon` into a fake Blender config (newest version, explicit version, replace,
+  missing-config error, ZIP contents), PowerShell UTF-8 BOM on CLI stdin, and capture keeping the
+  scene's aspect ratio (1920x1080 scene → 768x432 preview).
+- Wheel smoke test through `uvx --isolated --from dist/blender_astra_mcp-0.2.0-py3-none-any.whl`:
+  `--version`, `--help` and `install-addon --zip`. The wheel bundles the add-on sources.
+- [Tool-context benchmark](tool-context.md): this server's real `tools/list` against Blender Lab's
+  official server and ahujasid's server, tokenized with `o200k_base` and `cl100k_base`.
+- [Lighthouse example](../examples/lighthouse): the five batches replayed from an empty
+  factory-startup scene in a fresh headless Blender — 109 operations, 5,017 argument tokens,
+  202 result tokens, every batch under 0.1 s. The README animation was rendered from that scene.
 - Add-on ZIP packaging and Python wheel/sdist build — passed.
 - Actual ZIP installation into an isolated Blender scripts directory, enable, timer registration,
   start/stop, descriptor removal and disable — passed.
@@ -42,16 +52,18 @@ envelopes, images, setup and discovery. No model was invoked or charged by this 
 This does not establish the total token cost or output quality of an autonomous modeling task.
 A future comparison should run repeated matched briefs on the same model/settings, collect the
 provider's actual usage counters, and score scene/render correctness before comparing consumption.
-There is currently no measured comparison against ahujasid/blender-mcp or another product.
+The [tool-context benchmark](tool-context.md) compares fixed tool-definition cost against other
+servers. It does not compare end-to-end task cost or output quality.
 
 ## Visual artifact
 
-The example image is a real Cycles render of 50 managed cubes created by five local array operations,
-with a managed floor, camera and lights. It demonstrates scene construction and rendering, not
-artistic quality, topology quality for production assets, or complex modeling capability.
+The lighthouse animation is a real Cycles render (960x540, 64 samples, 112 frames) of the scene the
+five example batches build. Frames 97 to 112 are cross-faded into frames 1 to 16 so the GIF loops
+without a visible seam. The scene was written by Claude across iterations with `capture` previews;
+the committed batches are the final versions, not a single unedited agent transcript. It shows scene
+construction, shading, animation and rendering, not production topology.
 
-The editable scene and installable ZIP are provided as release assets. The test scripts recreate
-them without touching a user scene. `artifacts/` is ignored because logs can contain local paths.
+`artifacts/` is ignored because logs can contain local paths.
 
 ## Limits of verification
 
