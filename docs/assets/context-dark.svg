@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="192" viewBox="0 0 820 192" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">
+<title>Fixed context per request: tool definitions plus server instructions (tiktoken o200k)</title>
+<text x="234" y="33" text-anchor="end" font-size="16" font-weight="700" fill="#e6edf3">Blender Astra MCP</text>
+<text x="234" y="52" text-anchor="end" font-size="13" fill="#9198a1">4 tools</text>
+<rect x="250" y="22" width="15" height="26" rx="5" fill="#f5922a"/>
+<text x="277" y="41" font-size="16" font-weight="700" fill="#f5922a">338 tokens</text>
+<text x="234" y="89" text-anchor="end" font-size="16" font-weight="500" fill="#e6edf3">Blender Lab official</text>
+<text x="234" y="108" text-anchor="end" font-size="13" fill="#9198a1">26 tools</text>
+<rect x="250" y="78" width="215" height="26" rx="5" fill="#3d444d"/>
+<text x="477" y="97" font-size="16" font-weight="500" fill="#e6edf3">4,722 tokens<tspan dx="10" fill="#9198a1" font-weight="400">14.0x more</tspan></text>
+<text x="234" y="145" text-anchor="end" font-size="16" font-weight="500" fill="#e6edf3">ahujasid</text>
+<text x="234" y="164" text-anchor="end" font-size="13" fill="#9198a1">31 tools</text>
+<rect x="250" y="134" width="340" height="26" rx="5" fill="#3d444d"/>
+<text x="602" y="153" font-size="16" font-weight="500" fill="#e6edf3">7,464 tokens<tspan dx="10" fill="#9198a1" font-weight="400">22.1x more</tspan></text>
+</svg>

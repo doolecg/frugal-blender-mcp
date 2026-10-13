@@ -1,8 +1,8 @@
 [
   {
-    "label": "Blender Astra MCP (this repo)",
+    "label": "Blender Astra MCP",
     "server": {
-      "name": "blender-compact",
+      "name": "blender-astra",
       "version": "1.30.0"
     },
     "tools": 4,
@@ -13,16 +13,16 @@
       "capture"
     ],
     "definition_tokens": {
-      "o200k_base": 352,
-      "cl100k_base": 343
+      "o200k_base": 289,
+      "cl100k_base": 280
     },
     "instruction_tokens": {
       "o200k_base": 49,
       "cl100k_base": 50
     },
     "total_tokens": {
-      "o200k_base": 401,
-      "cl100k_base": 393
+      "o200k_base": 338,
+      "cl100k_base": 330
     }
   },
   {

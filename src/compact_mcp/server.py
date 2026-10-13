@@ -7,7 +7,36 @@ from mcp.server.fastmcp import FastMCP, Image
 
 from .client import Client
 
-mcp = FastMCP(
+
+def lean(schema):
+    """Trim generated JSON Schema noise the model never reads; tool definitions are resent every request."""
+    if isinstance(schema, list):
+        return [lean(item) for item in schema]
+    if not isinstance(schema, dict):
+        return schema
+    options = schema.get("anyOf")
+    if "default" in schema and schema["default"] is None and isinstance(options, list) and len(options) == 2:
+        if {"type": "null"} in options:
+            # Optional[X] = None: omitting the argument already means None.
+            rest = {k: v for k, v in schema.items() if k not in ("anyOf", "default")}
+            return lean({**rest, **next(o for o in options if o != {"type": "null"})})
+    return {
+        key: {name: lean(prop) for name, prop in value.items()} if key == "properties" else lean(value)
+        for key, value in schema.items()
+        if key != "title" and not (key == "additionalProperties" and value is True)
+    }
+
+
+class LeanFastMCP(FastMCP):
+    async def list_tools(self):
+        tools = await super().list_tools()
+        for tool in tools:
+            tool.description = " ".join((tool.description or "").split())
+            tool.inputSchema = lean(tool.inputSchema)
+        return tools
+
+
+mcp = LeanFastMCP(
     "blender-astra",
     instructions=(
         "Discover an operation before use. Batch related edits. Inspect narrowly; capture only when visual feedback "

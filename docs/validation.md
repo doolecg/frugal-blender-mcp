@@ -6,10 +6,12 @@ NVIDIA RTX 5060 Laptop GPU (OptiX).
 Executed, not inferred:
 
 - `uv run ruff check` and `uv run ruff format --check` — passed.
-- Full pytest suite with `BLENDER_EXE` and `BLENDER_TEST_UI=1` — **31 passed**, no skips. New since
+- Full pytest suite with `BLENDER_EXE` and `BLENDER_TEST_UI=1` — **34 passed**, no skips. New since
   2026-09-10: `install-addon` into a fake Blender config (newest version, explicit version, replace,
-  missing-config error, ZIP contents), PowerShell UTF-8 BOM on CLI stdin, and capture keeping the
-  scene's aspect ratio (1920x1080 scene → 768x432 preview).
+  missing-config error, ZIP contents), PowerShell UTF-8 BOM on CLI stdin, capture keeping the
+  scene's aspect ratio (1920x1080 scene → 768x432 preview), EEVEE capture of a scene with no world
+  plus the Cycles override (from #1), and lean tool definitions (no generated titles or `null`
+  unions, at most 300 tokens).
 - Wheel smoke test through `uvx --isolated --from dist/blender_astra_mcp-0.2.0-py3-none-any.whl`:
   `--version`, `--help` and `install-addon --zip`. The wheel bundles the add-on sources.
 - [Tool-context benchmark](tool-context.md): this server's real `tools/list` against Blender Lab's

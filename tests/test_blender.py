@@ -218,9 +218,7 @@ def test_capture_defaults_to_eevee_and_renders_unlit_scene(blender):
     assert image["bytes"] > 2000
 
     # The engine override is still honoured for callers who want ray tracing.
-    cycles = blender.call(
-        "capture", {"filename": "cycles-probe.png", "size": 128, "engine": "CYCLES"}
-    )
+    cycles = blender.call("capture", {"filename": "cycles-probe.png", "size": 128, "engine": "CYCLES"})
     assert blender.image_path(cycles["file"]).read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
 
 

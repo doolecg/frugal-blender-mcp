@@ -346,9 +346,12 @@ class Engine:
         # Cycles on an unlit scene yields a black frame. Prefer EEVEE for previews
         # and only use Cycles when the caller explicitly asks for it.
         if engine is None:
-            engine = "BLENDER_EEVEE_NEXT" if "BLENDER_EEVEE_NEXT" in {
-                i.identifier for i in bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items
-            } else "BLENDER_EEVEE"
+            engine = (
+                "BLENDER_EEVEE_NEXT"
+                if "BLENDER_EEVEE_NEXT"
+                in {i.identifier for i in bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items}
+                else "BLENDER_EEVEE"
+            )
         # Keep the scene's aspect ratio so previews match final framing; size is the longest edge.
         scale = size / max(render.resolution_x, render.resolution_y)
         width = max(16, round(render.resolution_x * scale))
