@@ -130,10 +130,7 @@ The five calls behind the animation above, and what each one added:
 
 ## Benchmark
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/mohakmalviya/blender-astra-mcp/main/docs/assets/context-dark.svg">
-  <img alt="Fixed context per request: Blender Astra MCP 338 tokens, Blender Lab official 4,722 tokens, ahujasid 7,464 tokens" src="https://raw.githubusercontent.com/mohakmalviya/blender-astra-mcp/main/docs/assets/context-light.svg" width="100%">
-</picture>
+<img alt="Fixed context per request: Blender Astra MCP 338 tokens, Blender Lab official 4,722 tokens, ahujasid 7,464 tokens" src="https://raw.githubusercontent.com/mohakmalviya/blender-astra-mcp/main/docs/assets/context.svg" width="100%">
 
 | Server | Tools | Fixed context per request |
 |---|---:|---:|

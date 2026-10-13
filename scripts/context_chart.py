@@ -1,33 +1,40 @@
-"""Draw the README's fixed-context chart from docs/tool-context.json (light and dark SVGs)."""
+"""Draw the README's fixed-context chart from docs/tool-context.json as one self-contained SVG."""
 
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-THEMES = {
-    "light": {"text": "#1f2328", "muted": "#59636e", "bar": "#d0d7de", "ours": "#e87d0d"},
-    "dark": {"text": "#e6edf3", "muted": "#9198a1", "bar": "#3d444d", "ours": "#f5922a"},
+# The chart carries its own background, so the same file reads well in GitHub's light and dark themes.
+COLORS = {
+    "card": "#0d1117",
+    "border": "#30363d",
+    "text": "#e6edf3",
+    "muted": "#9198a1",
+    "bar": "#3d444d",
+    "ours": "#f5922a",
 }
 LABELS = {"Blender Astra": "Blender Astra MCP", "Blender Lab": "Blender Lab official", "ahujasid": "ahujasid"}
-W, LEFT, BAR_MAX, ROW = 820, 250, 340, 56
+W, LEFT, BAR_MAX, ROW, PAD = 820, 250, 340, 56, 20
 
 
 def label(row):
     return next(v for k, v in LABELS.items() if row["label"].startswith(k))
 
 
-def svg(rows, theme):
-    c = THEMES[theme]
+def svg(rows):
+    c = COLORS
     ours = rows[0]["total_tokens"]["o200k_base"]
     top = max(r["total_tokens"]["o200k_base"] for r in rows)
-    height = 24 + ROW * len(rows)
+    height = 24 + ROW * len(rows) + 2 * PAD
     out = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{height}" viewBox="0 0 {W} {height}" '
         'font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">',
         "<title>Fixed context per request: tool definitions plus server instructions (tiktoken o200k)</title>",
+        f'<rect x="0.5" y="0.5" width="{W - 1}" height="{height - 1}" rx="12" fill="{c["card"]}" '
+        f'stroke="{c["border"]}"/>',
     ]
     for i, r in enumerate(rows):
-        y = 16 + i * ROW
+        y = PAD + 16 + i * ROW
         total = r["total_tokens"]["o200k_base"]
         width = max(6, round(BAR_MAX * total / top))
         mine = i == 0
@@ -55,11 +62,10 @@ def svg(rows, theme):
 def main():
     rows = json.loads((ROOT / "docs/tool-context.json").read_text(encoding="utf-8"))
     rows.sort(key=lambda r: r["total_tokens"]["o200k_base"])
-    folder = ROOT / "docs/assets"
-    folder.mkdir(exist_ok=True)
-    for theme in THEMES:
-        (folder / f"context-{theme}.svg").write_text(svg(rows, theme), encoding="utf-8")
-        print(folder / f"context-{theme}.svg")
+    path = ROOT / "docs/assets/context.svg"
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(svg(rows), encoding="utf-8")
+    print(path)
 
 
 if __name__ == "__main__":
