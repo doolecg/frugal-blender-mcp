@@ -1,0 +1,25 @@
+name: Real Blender tests
+# Runs the tests that need a real Blender. Started by hand or weekly, so a slow download never blocks a push.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 5 * * 1"
+permissions:
+  contents: read
+jobs:
+  blender:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.13"
+          python-version: "3.12"
+      - name: Install Blender 4.2 LTS and a software display
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libxi6 libxxf86vm1 libxfixes3 libxrender1 libgl1 libsm6 libegl1
+          curl -fsSL https://download.blender.org/release/Blender4.2/blender-4.2.3-linux-x64.tar.xz | tar -xJ -C "$RUNNER_TEMP"
+          echo "BLENDER_EXE=$RUNNER_TEMP/blender-4.2.3-linux-x64/blender" >> "$GITHUB_ENV"
+      - run: uv sync --frozen
+      - run: xvfb-run -a uv run pytest -q

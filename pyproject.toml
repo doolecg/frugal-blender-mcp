@@ -4,12 +4,12 @@ build-backend = "hatchling.build"
 
 [project]
 name = "frugal-blender-mcp"
-version = "0.2.0"
+version = "0.3.0"
 description = "Blender MCP server with 4 tools: batched scene edits at a fraction of the context cost"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-authors = [{ name = "Mohak Malviya" }]
+authors = [{ name = "Mohak Malviya" }, { name = "doolecg" }]
 requires-python = ">=3.11"
 dependencies = ["mcp>=1.20,<2"]
 keywords = ["blender", "mcp", "model-context-protocol", "3d", "ai-agents", "claude", "codex", "cursor"]
@@ -22,8 +22,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/mohakmalviya/frugal-blender-mcp"
-Issues = "https://github.com/mohakmalviya/frugal-blender-mcp/issues"
+Homepage = "https://github.com/doolecg/frugal-blender-mcp"
+Issues = "https://github.com/doolecg/frugal-blender-mcp/issues"
 
 [project.scripts]
 frugal-blender-mcp = "compact_mcp.server:main"

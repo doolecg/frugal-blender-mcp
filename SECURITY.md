@@ -9,7 +9,13 @@ or checkpoints for valuable scenes. It is not an OS sandbox.
   On Unix it is created with mode 0600; on Windows protection relies on the parent profile's inherited
   ACLs. Same-user processes can read it. Do not sync or share the state directory.
 - **Write**, **render**, **delete**, **save** and **python** permissions are enforced in Blender. Only
-  write and render default on. Stop and restart to change them. A client cannot grant itself permissions.
+  write and render default on. They are stored in Blender's user preferences, not in the .blend file, and change
+  only after a restart of the bridge. A client cannot grant itself permissions.
+- **Ask before risky steps** (off by default, on in the Build preset) holds delete, save and python steps until you press Approve in the sidebar. They are denied after two minutes.
+- **Export** needs the save permission and never overwrites. With a Send-to folder set in Preferences it also copies each file there, and refuses if a file of that name already exists. The folder is yours to set; the agent cannot change it.
+- **Headless mode** starts a Blender with no window using the permissions you give it on the command line (default write and render). `FRUGAL_HEADLESS` makes the MCP server start one on its own, with the same defaults, and stop it when the server exits. Approval prompts need a window, so they do not apply there.
+- **Auto-start** is off by default. When on, the bridge starts with the saved permissions every time Blender
+  opens or loads a file, so with `python` allowed that access is on without a click.
 - Deletion also needs `confirm: true`. This is an explicit intent flag, not proof of human approval;
   the AI client's approval policy remains responsible for human confirmation.
 - **The `python` permission is unrestricted local code execution.** When enabled, the agent can run any
