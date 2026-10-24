@@ -99,6 +99,7 @@ def main():
     setup = commands.add_parser("install-addon", help="Copy the Blender add-on into Blender's user scripts")
     setup.add_argument("--blender-version", help="Target a specific Blender, e.g. 5.1 (default: newest)")
     setup.add_argument("--zip", metavar="PATH", help="Write an add-on ZIP for Install from Disk instead")
+    setup.add_argument("--extension", action="store_true", help="With --zip: build a Blender 4.2+ extension")
     quiet = commands.add_parser("headless", help="Run Blender with no window and the bridge already started")
     quiet.add_argument("blend_file", nargs="?", help="A .blend file to open first (default: an empty scene)")
     quiet.add_argument("--blender", help="Path to the Blender executable (default: find it)")
@@ -119,7 +120,7 @@ def main():
         return
     try:
         if args.zip:
-            print(f"Wrote {install.write_zip(args.zip)}")
+            print(f"Wrote {(install.write_extension_zip if args.extension else install.write_zip)(args.zip)}")
             print("In Blender: Edit > Preferences > Add-ons > Install from Disk, then pick that file.")
             return
         print(f"Installed to {install.install(args.blender_version)}")
