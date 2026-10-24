@@ -23,7 +23,7 @@ def lean(schema):
     return {
         key: {name: lean(prop) for name, prop in value.items()} if key == "properties" else lean(value)
         for key, value in schema.items()
-        if key != "title" and not (key == "additionalProperties" and value is True)
+        if key not in ("title", "default") and not (key == "additionalProperties" and value is True)
     }
 
 
@@ -39,8 +39,8 @@ class LeanFastMCP(FastMCP):
 mcp = LeanFastMCP(
     "frugal-blender",
     instructions=(
-        "Discover an operation before use. Batch related edits. Inspect narrowly; capture only when visual feedback "
-        "is needed. Existing scenes are editable. Discover python for full bpy access (must be enabled in Blender). Partial batch failures persist; inspect before retrying."
+        "Discover an operation before use. Batch edits. Inspect narrowly; capture only when you need to see. "
+        "Existing scenes are editable. Discover python for full bpy access (enabled in Blender)."
     ),
 )
 
@@ -63,9 +63,9 @@ def discover(operation: str | None = None) -> str:
 
 @mcp.tool()
 def execute(steps: list[dict], dry_run: bool = False, timeout: int = 180) -> str:
-    """Execute up to 100 {'op': name, ...arguments} steps. Returns counts/errors, not full scene data.
+    """Run up to 100 {'op': name, ...args} steps; returns counts/errors.
 
-    dry_run checks syntax/permissions only. Runtime failures are partial, not transactional.
+    dry_run validates only. Failed batches roll back in interactive Blender.
     """
     if not 1 <= timeout <= 86400:
         raise ValueError("timeout must be 1..86400 seconds; timeout does not cancel Blender work")
@@ -74,9 +74,9 @@ def execute(steps: list[dict], dry_run: bool = False, timeout: int = 180) -> str
 
 @mcp.tool()
 def capture(size: int = 512, view: str = "camera", engine: str | None = None) -> Image:
-    """PNG preview, longest edge 64..1024, scene aspect ratio: camera render or viewport (interactive only).
+    """PNG preview, longest edge 64..1024 (512). view: camera (default), viewport (interactive only) or sheet (front, right, top, camera tiles).
 
-    Renders with EEVEE (fast); pass engine="CYCLES" for ray-traced quality.
+    EEVEE; engine="CYCLES" for quality.
     """
     client = Client()
     result = client.call(
