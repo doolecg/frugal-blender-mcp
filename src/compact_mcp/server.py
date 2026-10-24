@@ -99,7 +99,21 @@ def main():
     setup = commands.add_parser("install-addon", help="Copy the Blender add-on into Blender's user scripts")
     setup.add_argument("--blender-version", help="Target a specific Blender, e.g. 5.1 (default: newest)")
     setup.add_argument("--zip", metavar="PATH", help="Write an add-on ZIP for Install from Disk instead")
+    quiet = commands.add_parser("headless", help="Run Blender with no window and the bridge already started")
+    quiet.add_argument("blend_file", nargs="?", help="A .blend file to open first (default: an empty scene)")
+    quiet.add_argument("--blender", help="Path to the Blender executable (default: find it)")
+    quiet.add_argument(
+        "--permissions", default="write,render", help="Comma list of write,render,delete,save,python"
+    )
     args = parser.parse_args()
+    if args.command == "headless":
+        from . import headless
+
+        try:
+            headless.run(args.blender, args.blend_file, args.permissions)
+        except FileNotFoundError as exc:
+            raise SystemExit(str(exc)) from exc
+        return
     if args.command is None:
         mcp.run(transport="stdio")
         return
