@@ -77,6 +77,7 @@ class Server:
             "token": self.token,
             "pid": os.getpid(),
             "output_dir": str(self.engine.output_dir.resolve()),
+            "crash_dir": self.engine.crash_dir,
         }
         fd = os.open(self.descriptor, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
         with os.fdopen(fd, "w", encoding="utf-8") as out:

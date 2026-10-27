@@ -3,6 +3,8 @@
 import json
 import os
 import socket
+import tempfile
+import time
 import uuid
 from pathlib import Path
 
@@ -29,6 +31,16 @@ def stale(path):
     return False
 
 
+def crash_report(crash_dir, lines=12):
+    """What to tell the agent when Blender has gone: its newest crash log, if Blender wrote one."""
+    logs = [p for p in Path(crash_dir).glob("*.crash.txt") if time.time() - p.stat().st_mtime < 600]
+    if not logs:
+        return "Blender closed or crashed during the call; no crash log found. Unsaved work may be lost."
+    log = max(logs, key=lambda p: p.stat().st_mtime)
+    tail = log.read_text(encoding="utf-8", errors="replace").strip().splitlines()[-lines:]
+    return f"Blender crashed during the call. Crash log: {log}\n" + "\n".join(tail)
+
+
 class Client:
     def __init__(self, descriptor=None):
         explicit = descriptor or os.environ.get("BLENDER_COMPACT_CONNECTION")
@@ -52,6 +64,7 @@ class Client:
                     "Start the Blender bridge. For multiple/stale instances, set BLENDER_COMPACT_CONNECTION."
                 )
             path = paths[0]
+        self.path = path
         self.info = json.loads(path.read_text(encoding="utf-8"))
         if self.info.get("protocol") != 1 or self.info.get("host") != "127.0.0.1":
             raise ValueError("Only protocol 1 loopback connections are supported")
@@ -80,6 +93,9 @@ class Client:
                     if len(received) > 2 * 1024 * 1024:
                         raise ValueError("Response exceeds 2 MiB")
         except (TimeoutError, ConnectionError, OSError) as exc:
+            if stale(self.path):
+                report = crash_report(self.info.get("crash_dir") or tempfile.gettempdir())
+                raise RuntimeError(f"{report}\nThe outcome may be unknown. Request id: {rid}") from exc
             raise RuntimeError(
                 f"Transport failed; outcome may be unknown. Inspect before retrying. Request id: {rid}"
             ) from exc

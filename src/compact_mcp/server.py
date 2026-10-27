@@ -69,7 +69,11 @@ def execute(steps: list[dict], dry_run: bool = False, timeout: int = 180) -> str
     """
     if not 1 <= timeout <= 86400:
         raise ValueError("timeout must be 1..86400 seconds; timeout does not cancel Blender work")
-    return compact(Client().call("execute", {"steps": steps, "dry_run": dry_run}, timeout=timeout))
+    result = Client().call("execute", {"steps": steps, "dry_run": dry_run}, timeout=timeout)
+    if "ms" in result:
+        # Lets the agent measure what each call costs; counted before the field itself is added.
+        result["chars"] = len(compact(result))
+    return compact(result)
 
 
 @mcp.tool()

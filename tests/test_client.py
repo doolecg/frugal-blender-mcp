@@ -85,3 +85,12 @@ def test_stale_descriptor_from_a_crash_is_ignored_and_removed(tmp_path, monkeypa
         client = Client()
     assert client.info["port"] != dead_port
     assert [p.name for p in folder.glob("connection-*.json")] == ["connection-2.json"]
+
+
+def test_crash_report_names_the_newest_crash_log(tmp_path):
+    from compact_mcp import client
+
+    assert "no crash log" in client.crash_report(tmp_path)
+    (tmp_path / "scene.crash.txt").write_text("header\n# Python backtrace\n  File engine.py, line 323 in finish\n")
+    report = client.crash_report(tmp_path)
+    assert str(tmp_path / "scene.crash.txt") in report and "line 323 in finish" in report

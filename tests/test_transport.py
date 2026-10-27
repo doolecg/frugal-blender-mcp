@@ -33,6 +33,7 @@ class SlowRun:
 class FakeEngine:
     def __init__(self, root):
         self.output_dir = root
+        self.crash_dir = str(root)
         self.calls = 0
 
     def needs_approval(self, method, params):
