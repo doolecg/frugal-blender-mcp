@@ -4,6 +4,7 @@ import contextlib
 import math
 import re
 import shutil
+import time
 from collections import deque
 from pathlib import Path
 
@@ -261,6 +262,12 @@ def prune_previews(root):
         path.unlink(missing_ok=True)
 
 
+def user_marker():
+    """Changes when the user runs an operator in Blender. Operators the bridge calls are not recorded."""
+    ops = bpy.context.window_manager.operators
+    return len(ops), ops[-1].as_pointer() if len(ops) else 0
+
+
 class Run:
     """One batch, advanced a step at a time so visible mode can redraw between steps."""
 
@@ -273,6 +280,8 @@ class Run:
         self.can_undo = not bpy.app.background and bpy.ops.ed.undo_push.poll()
         if self.can_undo:
             bpy.ops.ed.undo_push(message="Before Frugal MCP batch")
+        self.started = time.monotonic()
+        self.user_marker = user_marker()
 
     def advance(self):
         """Run one step. Returns the response once the batch is over, otherwise None."""
@@ -297,6 +306,11 @@ class Run:
 
     def finish(self):
         self.engine.running = None
+        response = self.outcome()
+        response["ms"] = round((time.monotonic() - self.started) * 1000)
+        return response
+
+    def outcome(self):
         if self.cancelled and self.error is None:
             self.error, self.failed_at = "Stopped by the user", self.index
         if self.error is None:
@@ -319,7 +333,14 @@ class Run:
             "error": self.error,
             "changed": self.changed,
         }
-        if self.can_undo:
+        if self.can_undo and user_marker() != self.user_marker:
+            # Undo would also take back what the user did in Blender while the batch ran.
+            response.update(
+                atomic=False,
+                rolled_back=False,
+                note="Not undone because the user worked in Blender during the batch. Ask them to press Ctrl+Z.",
+            )
+        elif self.can_undo:
             bpy.ops.ed.undo()
             response.update(changed=0, atomic=True, rolled_back=True)
         else:
@@ -341,6 +362,9 @@ class Engine:
         self.running = None  # the Run in progress in visible mode
         self.log = deque(maxlen=30)  # what the agent did lately, newest last
         self.refresh = None  # set by the add-on to redraw the interface
+        self.namespace = {}  # python steps share it, so later calls can reuse earlier set-up
+        # Blender writes its crash log next to this session's temp folder, wherever the user set that.
+        self.crash_dir = str(Path(bpy.app.tempdir).parent)
 
     def needs_approval(self, method, params):
         """A short description of the risky steps in a request, or None when it can run straight away."""
@@ -351,7 +375,10 @@ class Engine:
         if not risky:
             return None
         text = ", ".join(sorted({s["op"] for s in risky}))
-        code = next((s["code"] for s in risky if s["op"] == "python" and isinstance(s.get("code"), str)), "")
+        code = next(
+            (s.get("code", s.get("file")) for s in risky if s["op"] == "python" and isinstance(s.get("code", s.get("file")), str)),
+            "",
+        )
         return f"{text}: {code.strip()[:60]}" if code else text
 
     def collection(self):

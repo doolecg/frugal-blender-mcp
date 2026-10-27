@@ -1,6 +1,7 @@
 """Install this directory as a legacy Blender add-on (ZIP provided by package script)."""
 
 import atexit
+from pathlib import Path
 
 import bpy
 from bpy.app.handlers import persistent
@@ -110,6 +111,20 @@ def on_load_post(_):
     autostart()
 
 
+def changed(self, context):
+    # Blender only auto-saves preferences it knows changed, and changes made from Python
+    # (the preset buttons) do not tell it. Without this the settings vanish on quit.
+    context.preferences.is_dirty = True
+    # A running bridge follows the user's ticks at once. Only the user can tick them: the bridge
+    # gives no operation that writes preferences, and python is already full access.
+    if _server is not None:
+        engine, now = _server.engine, options()
+        engine.permissions = set(now["permissions"])
+        engine.ask, engine.visible, engine.pace = now["ask"], now["visible"], now["pace"]
+        engine.send_dir = Path(now["send_dir"]) if now["send_dir"] else None
+        redraw()
+
+
 class COMPACT_Preferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
@@ -117,21 +132,24 @@ class COMPACT_Preferences(bpy.types.AddonPreferences):
         name="Start bridge when Blender opens",
         description="Start the bridge on launch and after each file load, with the permissions below",
         default=False,
+        update=changed,
     )
-    allow_write: bpy.props.BoolProperty(name="Allow write", default=True)
-    allow_render: bpy.props.BoolProperty(name="Allow render", default=True)
-    allow_delete: bpy.props.BoolProperty(name="Allow delete", default=False)
-    allow_save: bpy.props.BoolProperty(name="Allow save", default=False)
-    allow_python: bpy.props.BoolProperty(name="Allow python", default=False)
+    allow_write: bpy.props.BoolProperty(name="Allow write", default=True, update=changed)
+    allow_render: bpy.props.BoolProperty(name="Allow render", default=True, update=changed)
+    allow_delete: bpy.props.BoolProperty(name="Allow delete", default=False, update=changed)
+    allow_save: bpy.props.BoolProperty(name="Allow save", default=False, update=changed)
+    allow_python: bpy.props.BoolProperty(name="Allow python", default=False, update=changed)
     send_folder: bpy.props.StringProperty(
         name="Send exports to",
         description="Also copy each export step's file into this folder, for example your game project's assets folder",
         subtype="DIR_PATH",
+        update=changed,
     )
     visible_mode: bpy.props.BoolProperty(
         name="Show what the agent is doing",
         description="Run batches one step at a time, selecting each object as it is changed, so you can watch",
         default=False,
+        update=changed,
     )
     step_pause: bpy.props.FloatProperty(
         name="Pause between steps (seconds)",
@@ -139,11 +157,13 @@ class COMPACT_Preferences(bpy.types.AddonPreferences):
         max=1.0,
         default=0.3,
         description="Used by visible mode",
+        update=changed,
     )
     ask_before_risky: bpy.props.BoolProperty(
         name="Ask me before delete, save or python steps",
         description="Hold those steps until you press Approve in the Frugal MCP sidebar tab (denied after 2 minutes)",
         default=False,
+        update=changed,
     )
 
     def draw(self, context):
@@ -172,7 +192,7 @@ class COMPACT_Preferences(bpy.types.AddonPreferences):
         notice.label(text="To the extent permitted by law, the authors are not liable for")
         notice.label(text="any loss or damage from using it. Back up your work.")
         if _server:
-            layout.label(text="Bridge running; permission changes apply after a restart")
+            layout.label(text="Bridge running; changes apply straight away")
             layout.operator("compact_mcp.stop")
         else:
             layout.operator("compact_mcp.start")
@@ -184,7 +204,7 @@ class COMPACT_OT_start(bpy.types.Operator):
 
     def execute(self, context):
         start(**options())
-        self.report({"INFO"}, "Bridge started on loopback. Permissions fixed until stopped.")
+        self.report({"INFO"}, "Bridge started on loopback.")
         return {"FINISHED"}
 
 

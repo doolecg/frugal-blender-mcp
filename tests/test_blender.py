@@ -504,3 +504,29 @@ def test_sprite_sheet_renders_frames_into_one_grid(blender):
     data = (Path(blender.info["output_dir"]) / "sprites.png").read_bytes()
     assert unpack(">II", data[16:24]) == (result["width"], result["height"])
     assert result["width"] == 3 * (result["width"] // 3) and result["height"] == 2 * (result["height"] // 2)
+
+
+def python(blender, **step):
+    return blender.call("execute", {"steps": [{"op": "python", **step}]})
+
+
+def test_python_output_is_quiet_unless_needed(blender):
+    loud = "print('importer noise ' * 50)\n"
+    assert "stdout" not in python(blender, code=loud + "result = 1")["results"][0]["result"]
+    assert "importer noise" in python(blender, code=loud)["results"][0]["result"]["stdout"]
+    failed = python(blender, code="print('before it broke')\nraise ValueError('boom')")
+    assert failed["ok"] is False
+    assert failed["error"] == "boom\nLast output:\nbefore it broke"
+
+
+def test_python_runs_a_file_and_keeps_values_between_calls(blender, tmp_path):
+    script = tmp_path / "setup.py"
+    script.write_text("rig = {'gap': params['gap']}\nresult = __file__.endswith('setup.py')\n")
+    first = python(blender, file=str(script), params={"gap": 4})
+    assert first["results"][0]["result"]["value"] is True
+    assert isinstance(first["ms"], int)
+    assert python(blender, code="result = rig['gap']")["results"][0]["result"]["value"] == 4
+    with pytest.raises(RuntimeError, match="absolute path"):
+        python(blender, file="setup.py")
+    with pytest.raises(RuntimeError, match="not both"):
+        python(blender, code="1", file=str(script))

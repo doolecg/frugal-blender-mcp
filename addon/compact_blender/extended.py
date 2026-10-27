@@ -7,6 +7,7 @@ Blender main thread. It is not covered by the narrower write/save/delete toggles
 import contextlib
 import io
 import json
+import os
 
 import bpy
 
@@ -16,8 +17,10 @@ OPERATIONS = {
         "summary": "Full bpy/Python API: nodes, rigs, simulation, files, operators; unrestricted local code",
         "args": {
             "code": "Python source; bpy, params, output_dir provided; assign result for JSON return; may wait for approval in Blender",
+            "file": "absolute path of a .py file to run instead of code",
             "params": "optional JSON object",
-            "max_output": "0..32000 characters, default 2000",
+            "max_output": "0..32000 characters, default 2000; printed output is returned only when result is unset or the step fails",
+            "note": "variables persist between calls until the bridge stops; keep names, not Blender objects",
         },
     },
     "modifier": {
@@ -95,7 +98,7 @@ def validate(op, s):
     if op not in OPERATIONS:
         return False
     required = {
-        "python": ("code",),
+        "python": (),
         "modifier": ("name", "modifier"),
         "keyframes": ("name", "data_path", "keys"),
         "frame": (),
@@ -111,9 +114,18 @@ def validate(op, s):
         if key not in s:
             raise ValueError(f"{op} needs {key}")
     if op == "python":
-        if not isinstance(s["code"], str):
+        if ("code" in s) == ("file" in s):
+            raise ValueError("python needs code or file, not both")
+        if "file" in s:
+            path = s["file"]
+            if not isinstance(path, str) or not path.endswith(".py") or not os.path.isabs(path):
+                raise ValueError("file must be an absolute path to a .py file")
+            if not os.path.isfile(path):
+                raise ValueError(f"No such file: {path}")
+        elif not isinstance(s["code"], str):
             raise ValueError("code must be a string")
-        compile(s["code"], "<frugal-mcp>", "exec")
+        else:
+            compile(s["code"], "<frugal-mcp>", "exec")
         if not isinstance(s.get("params", {}), dict):
             raise ValueError("params must be an object")
         if type(s.get("max_output", 2000)) is not int or not 0 <= s.get("max_output", 2000) <= 32000:
@@ -169,15 +181,20 @@ def validate(op, s):
     return True
 
 
+TAIL = 600  # printed output kept for a failed python step's error
+
+
 class BoundedOutput(io.TextIOBase):
     def __init__(self, limit):
         self.limit = limit
         self.text = ""
+        self.tail = ""
         self.total = 0
 
     def write(self, text):
         self.total += len(text)
         self.text += text[: max(0, self.limit - len(self.text))]
+        self.tail = (self.tail + text)[-TAIL:]
         return len(text)
 
 
@@ -199,9 +216,23 @@ def run(engine, s):
     if op == "python":
         limit = s.get("max_output", 2000)
         capture = BoundedOutput(limit)
-        namespace = {"bpy": bpy, "params": s.get("params", {}), "output_dir": str(engine.output_dir)}
-        with contextlib.redirect_stdout(capture), contextlib.redirect_stderr(capture):
-            exec(compile(s["code"], "<frugal-mcp>", "exec"), namespace)
+        # One namespace for the bridge's life, so a later call can reuse what an earlier one set up.
+        namespace = engine.namespace
+        namespace.pop("result", None)
+        namespace.update(bpy=bpy, params=s.get("params", {}), output_dir=str(engine.output_dir))
+        if "file" in s:
+            with open(s["file"], encoding="utf-8") as source:
+                code = compile(source.read(), s["file"], "exec")
+            namespace["__file__"] = s["file"]
+        else:
+            code = compile(s["code"], "<frugal-mcp>", "exec")
+        try:
+            with contextlib.redirect_stdout(capture), contextlib.redirect_stderr(capture):
+                exec(code, namespace)
+        except Exception as exc:
+            if capture.tail.strip():
+                raise RuntimeError(f"{exc}\nLast output:\n{capture.tail.strip()}") from exc
+            raise
         value = namespace.get("result")
         # Reject non-JSON results explicitly, rather than leaking opaque bpy representations.
         encoded = json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
@@ -213,7 +244,8 @@ def run(engine, s):
                 )
             else:
                 response["value"] = value
-        if capture.total:
+        # Importers print a lot; with a result set, the printed output is only noise.
+        if capture.total and "result" not in namespace:
             response.update(stdout=capture.text, stdout_truncated=capture.total > limit)
         # Python may mutate anything; never invent an object-change count.
         return {"result": response}
